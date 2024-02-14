@@ -1,0 +1,87 @@
+
+// EA Pivot MT4 FR
+// Developer's Site: forexroboteasy.com
+// Developed by: Forex Robot Easy Team
+
+// Include necessary libraries and dependencies
+
+#include <Trade\Trade.mqh>
+#include <Math\Math.mqh>
+#include <Arrays\ArrayObj.mqh>
+#include <Timeseries\Series.mqh>
+
+// Define constants
+
+#define TAKE_PROFIT 50 // Take profit level in pips
+#define STOP_LOSS 30 // Stop loss level in pips
+#define LOT_SIZE 0.1 // Lot size for trading
+
+// Define global variables
+
+CTrade trade; // Trade object
+CArrayObj levels; // Array to store calculated levels
+
+// Define helper functions
+
+// Function to calculate support and resistance levels using Pivot Point system
+void CalculateLevels()
+{
+    double pivot = iLow(NULL, 0, 0) + iHigh(NULL, 0, 0) + iClose(NULL, 0, 0) / 3; // Calculate pivot level
+    double support1 = pivot * 2 - iHigh(NULL, 0, 1); // Calculate first support level
+    double resistance1 = pivot * 2 - iLow(NULL, 0, 1); // Calculate first resistance level
+    
+    levels.Clear(); // Clear existing levels
+    levels.Add(pivot); // Add pivot level to array
+    levels.Add(support1); // Add first support level to array
+    levels.Add(resistance1); // Add first resistance level to array
+}
+
+// Function to place pending orders at calculated levels
+void PlacePendingOrders()
+{
+    for(int i = 0; i < levels.Total(); i++)
+    {
+        double level = levels.At(i); // Get level from array
+        
+        trade.SellStop(LOT_SIZE, level - STOP_LOSS, level + TAKE_PROFIT); // Place sell stop order
+        trade.BuyStop(LOT_SIZE, level + STOP_LOSS, level - TAKE_PROFIT); // Place buy stop order
+    }
+}
+
+// Function to monitor market conditions and adjust trading strategy accordingly
+void MonitorMarketConditions()
+{
+    // Add your logic here to monitor market conditions and adjust trading strategy
+}
+
+// Function to implement risk management measures
+void ImplementRiskManagement()
+{
+    trade.SetDeviationInPoints(20); // Set deviation in points for pending orders
+    trade.SetStopLoss(STOP_LOSS); // Set stop loss level
+    trade.SetTakeProfit(TAKE_PROFIT); // Set take profit level
+}
+
+// Function to execute trades based on predefined rules and conditions
+void ExecuteTrades()
+{
+    // Add your logic here to execute trades based on predefined rules and conditions
+}
+
+// Function to provide real-time updates on trade positions and performance
+void ProvideUpdates()
+{
+    // Add your logic here to provide real-time updates on trade positions and performance
+}
+
+// Entry point of the EA
+void OnTick()
+{
+    CalculateLevels(); // Calculate support and resistance levels
+    PlacePendingOrders(); // Place pending orders at calculated levels
+    MonitorMarketConditions(); // Monitor market conditions and adjust trading strategy
+    ImplementRiskManagement(); // Implement risk management measures
+    ExecuteTrades(); // Execute trades based on predefined rules and conditions
+    ProvideUpdates(); // Provide real-time updates on trade positions and performance
+}
+
